@@ -1,0 +1,112 @@
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='./css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+</head>
+<body>
+{% extends "base.html" %}
+
+    {% block form_container %}
+    <div class="form-container">
+        <h1>Basic Info</h1>
+        <div class="sidebar-divider"></div>
+        <form action="{{ url_for('submit_home_form') }}" method="post" id="userForm">
+            <div class="form-group">
+
+                <label for="start_date">1.Start Date</label>
+
+                {% if form_data.start_date %}
+                   <input type="text" id ="start_date" name="start_date" value="{{ form_data.start_date }}" required placeholder="Enter Start Date">
+                
+                {% else %}
+
+                <input type="text" id ="start_date" name="start_date"  value="2024-01-01" required placeholder="Enter Start Date">
+
+                {% endif %}
+
+                <label for="end_date">2.End Date</label>
+
+                {% if form_data.end_date %}
+                   <input type="text" id ="end_date" name="end_date" value="{{ form_data.end_date }}" required placeholder="Enter Start Date">
+                
+                {% else %}
+
+                <input type="text" id ="end_date" name="end_date"  value="2025-12-31" required placeholder="Enter Start Date">
+
+                {% endif %}
+
+                <label for="stock_names">3. List of Stock</label>
+                <select id="stock_names" name="stock_names" required>
+                    {% for incident in form_data.stock_names %}
+                            <option value='{{ incident }}'>{{ incident }}</option>
+                    {% endfor %}
+                </select>
+
+
+                <label for="volume_plot_type">4. Volume Plot </label>                
+                <select id="volume_plot_type" name="volume_plot_type" required>
+                    {% for volume_type in form_data.volume_plot_type %}
+                            <option value='{{ volume_type }}'>{{ volume_type }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    {% endblock %}
+
+    {% block navbar_main %}
+    <div class="cards-container">
+        {% if form_data %}
+            <div class="card">
+                <h3>Current Price (Rs)</h3>
+                <p>{{ form_data.current_price }}</p>
+                <i class="fas fa-clock card-icon"></i> <!-- Clock icon -->
+            </div>
+            <div class="card">
+                <h3>Sell to Buy Ratio</h3>
+                <p>{{ form_data.sell_to_buy }}</p>
+                <i class="fas fa-poll card-icon"></i> <!-- Dollar sign icon -->
+            </div>
+            <div class="card">
+                <h3>Skewness (Active People)</h3>
+                <p>{{ form_data.skweness }}</p>
+                <i class="fas fa-bullhorn card-icon"></i> <!-- Bullhorn icon -->
+            </div>
+            <div class="card">
+                <h3>Growth Potential</h3>
+                <p>{{ form_data.utilization }}</p>
+                <i class="fas fa-bullhorn card-icon"></i> <!-- Poll icon -->
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Plotly Charts Section -->
+    <div class="cards-container-row2">
+        <div class="card-line-chart">
+            {% if form_data %}
+            <h3>Trend Analysis :&nbsp;&nbsp;{{ form_data.selected_stock }}</h3>
+            {% else %}
+                <h3>Trend Analysis :</h3>
+            {% endif %}
+            <div class="sidebar-divider"></div>
+            <div class="bar-chart-cards" id="bar-chart"></div> 
+            
+        </div>
+    </div>
+
+    <div class="cards-container-row2">
+        <div class="card-line-chart">
+            {% if form_data %}
+            <h3>Volume Analysis :&nbsp;&nbsp;{{ form_data.selected_stock }}</h3>
+            {% else %}
+                <h3>Volume Analysis :</h3>
+            {% endif %}
+            <div class="sidebar-divider"></div>
+            <div class="line-chart-cards" id="line-chart"></div>
+        </div>
+    </div>
+
+    {% endblock %}
+</body>
