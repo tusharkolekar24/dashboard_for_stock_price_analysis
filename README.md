@@ -2,7 +2,10 @@
 Dashboard for Data Analytics and Visualization Purposes
 
 Home page: Volume & Stock analysis to give buy and sell signals.
-<img width="1872" height="928" alt="image" src="https://github.com/user-attachments/assets/ebdf7759-67b2-414e-bbab-bd50c8d76366" />
+<img width="1900" height="943" alt="image" src="https://github.com/user-attachments/assets/15464079-6e9b-410d-9793-8100591a7ea8" />
 
 Sector Page: Sector Analysis
-<img width="1906" height="912" alt="image" src="https://github.com/user-attachments/assets/8a68e2fb-8ff2-4a2b-9342-a9f3382806fa" />
+<img width="1908" height="932" alt="image" src="https://github.com/user-attachments/assets/52ac24bf-4056-4b56-888a-be7900c9a921" />
+
+Strategy page: Price action Analysis
+<img width="1904" height="940" alt="image" src="https://github.com/user-attachments/assets/32345a17-cdfb-4541-bcd4-37a8cf9af970" />
