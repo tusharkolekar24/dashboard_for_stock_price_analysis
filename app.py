@@ -325,5 +325,6 @@ async def bar_strategy_chart_data():
     graph_json = pio.to_json(plotdata)
     return jsonify({"graph_json": graph_json})   
 
+
 if __name__ == "__main__":
     app.run(debug=True)
