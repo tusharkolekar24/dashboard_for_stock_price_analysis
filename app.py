@@ -14,7 +14,7 @@ from plotly import graph_objects as go
 from datetime import datetime, timedelta
 from src.utility import users, get_home_dropdwon_info
 from src.connection import DB
-from src.functions import Analysis, Stock_Info, stock_statistics, trend_plot, bar_plot,Best_Stocks,Stock_Performance,area_plot_best_stock,area_plot_stocks,sector_stats
+from src.functions import *
 import asyncio
 
 db          = DB()
@@ -170,7 +170,7 @@ async def submit_sectoral_form():
     unselected_sell_buy_info = [but_sell_info for but_sell_info in metadata['sell_to_buy_sector_info'] if but_sell_info!=sell_to_buy_sector_info]
 
     metadata["threshold_limit"]         = [threshold_limit] + unselected_threshold
-    metadata['type_of_sector_plot']        = [type_of_sector_plot] + unselected_sector_plot
+    metadata['type_of_sector_plot']     = [type_of_sector_plot] + unselected_sector_plot
     metadata['sell_to_buy_sector_info'] = [sell_to_buy_sector_info] + unselected_sell_buy_info
 
     metadata["sector_start_date"]   = sector_start_date
@@ -182,6 +182,77 @@ async def submit_sectoral_form():
 
     flash("Form submitted successfully for Home page!", "success")
     return redirect(url_for("sector"))
+
+@app.route('/strategy')
+async def strategy():
+    if "username" in session:
+        
+        get_stock_info = Stock_Info(stock_name = metadata["selected_stock_strategy"],
+                                    start_date = metadata["start_date_strategy"],
+                                    end_date   = metadata["end_date_strategy"])
+        
+        data_processing     = get_stock_info.load_data(postgres_db=postgres_db)
+        
+        data_transformation = Analysis(dataset=data_processing)
+
+        information         = data_transformation.transform_info()
+
+        insights = get_signal(information = information, 
+                              investment  = 80000, 
+                              min_loss    = 1000, 
+                              interval    = 5, 
+                              min_return_threshold=0)
+        
+        categories = insights['Labels'].dropna().unique()
+
+        total_profit, buy_date, sell_date, comments = calculate_revenue(insights    = insights, 
+                                                                        categories  = categories, 
+                                                                        stock_data  = information.get('stock_info'),
+                                                                        min_return_threshold=500)
+        
+        current_info = information.get('stock_info')[information.get('stock_info')['Date']==information.get('stock_info')['Date'].max()]['Close'].values[0]
+        metadata['strategy_current_price']  = float(current_info)
+        metadata['Strategy_Stock_Metadata'] = information
+        metadata['strategy_event_count']    = len(comments)
+        metadata['strategy_total_profit']   = round(sum(total_profit),2)
+        metadata['strategy_buy_date']       = buy_date
+        metadata['strategy_sell_date']      = sell_date
+        metadata['strategy_comments']       = comments
+
+        past_history      = Historic_Info(day_info=metadata["end_date_strategy"])
+        past_history_info = past_history.load_data(postgres_db)
+        
+        past_history_table = pd.DataFrame(past_history_info,columns=['time','stock_name','close_price','volume_upg','moving_avg_50',
+                                       'moving_avg_25','percentage','rounded_diff','sell_to_buy_ratio',
+                                       'threshold','skewness'])
+        
+        metadata['strategy_past_history']   = past_history_table
+        # print(comments)
+        return await render_template(
+                "strategy.html",
+                username=session["username"],
+                form_data=metadata,
+                current_date=current_date,
+                years = current_date.split("-")[0]
+            )
+    
+    return redirect(url_for("login"))
+
+@app.route("/submit_strategy_form", methods=["POST"])
+async def submit_strategy_form():
+    form = await request.form
+    start_date_strategy = form.get("start_date_strategy")
+    end_date_strategy   = form.get("end_date_strategy")
+    stock_name_strategy = form.get("stock_names_strategy")
+
+    unselected_stocks = [stocks for stocks in metadata['stock_names'] if stocks!=stock_name_strategy]
+    metadata["start_date_strategy"]   = start_date_strategy
+    metadata["end_date_strategy"]     = end_date_strategy
+    metadata["stock_names_strategy"]  = [stock_name_strategy] + unselected_stocks
+    metadata["selected_stock_strategy"] = stock_name_strategy
+
+    flash("Form submitted successfully for Home page!", "success")
+    return redirect(url_for("strategy"))
 
 @app.route("/line-chart")
 async def line_chart_data():
@@ -232,6 +303,27 @@ async def tree_sectoral_chart_data():
     # Convert the chart to JSON
     graph_json = pio.to_json(plotdata)
     return jsonify({"graph_json": graph_json})
+
+
+@app.route("/line-strategy-chart")
+async def line_strategy_chart_data():
+
+    plotdata = await asyncio.to_thread(buy_to_sell_representations, 
+                                       information  = metadata['Strategy_Stock_Metadata'], 
+                                       buy_info     = metadata['strategy_buy_date'],
+                                       sell_info    = metadata['strategy_sell_date'])
+    # Convert the chart to JSON
+    graph_json = pio.to_json(plotdata)
+    return jsonify({"graph_json": graph_json})
+
+@app.route("/bar-strategy-chart")
+async def bar_strategy_chart_data():
+    # print( metadata['strategy_past_history'])
+    plotdata = await asyncio.to_thread(get_historical_info_bar_plot, 
+                                       plotset  = metadata['strategy_past_history'])
+    # Convert the chart to JSON
+    graph_json = pio.to_json(plotdata)
+    return jsonify({"graph_json": graph_json})   
 
 if __name__ == "__main__":
     app.run(debug=True)

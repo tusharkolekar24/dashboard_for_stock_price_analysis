@@ -29,7 +29,19 @@ def get_home_dropdwon_info()->Dict:
             'sector_end_date'  :str(datetime.now()).split(" ")[0],
             'Best_Stock_Metadata' : pd.DataFrame(),
             "selected_sector_plot": 'best performer',
-            'selected_thresh_limit': '10',
+            'selected_thresh_limit': 10,
             'selected_sell_to_buy_ratio':'>=1',
-            'sector_stats': None
+            'sector_stats': None,
+            'stock_names_strategy' :stock_info.get("stock_names"),
+            'start_date_strategy'  :'2024-01-01',
+            'end_date_strategy'    :str(datetime.now()).split(" ")[0],
+            'selected_stock_strategy':'BSE.NS',
+            'Strategy_Stock_Metadata': pd.DataFrame(),
+            'strategy_event_count':0,
+            'strategy_total_profit':0,
+            'strategy_buy_date':[],
+            'strategy_sell_date':[],
+            'strategy_comments':[],
+            'strategy_current_price':0,
+            'strategy_past_history': pd.DataFrame()
             }

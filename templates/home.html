@@ -17,27 +17,27 @@
                 <label for="start_date">1.Start Date</label>
 
                 {% if form_data.start_date %}
-                   <input type="text" id ="start_date" name="start_date" value="{{ form_data.start_date }}" required placeholder="Enter Start Date">
+                   <input type="date" id ="start_date" name="start_date" value="{{ form_data.start_date }}" required placeholder="Enter Start Date">
                 
                 {% else %}
 
-                <input type="text" id ="start_date" name="start_date"  value="2024-01-01" required placeholder="Enter Start Date">
+                <input type="date" id ="start_date" name="start_date"  value="2024-01-01" required placeholder="Enter Start Date">
 
                 {% endif %}
 
                 <label for="end_date">2.End Date</label>
 
                 {% if form_data.end_date %}
-                   <input type="text" id ="end_date" name="end_date" value="{{ form_data.end_date }}" required placeholder="Enter Start Date">
+                   <input type="date" id ="end_date" name="end_date" value="{{ form_data.end_date }}" required placeholder="Enter Start Date">
                 
                 {% else %}
 
-                <input type="text" id ="end_date" name="end_date"  value="2025-12-31" required placeholder="Enter Start Date">
+                <input type="date" id ="end_date" name="end_date"  value="2025-12-31" required placeholder="Enter Start Date">
 
                 {% endif %}
 
                 <label for="stock_names">3. List of Stock</label>
-                <select id="stock_names" name="stock_names" required>
+                <select id="stock_names" name="stock_names" class="stock-select" required>
                     {% for incident in form_data.stock_names %}
                             <option value='{{ incident }}'>{{ incident }}</option>
                     {% endfor %}

@@ -17,16 +17,16 @@
                 <label for="sector_start_date">1.Start Date</label>
 
                 {% if form_data.start_date %}
-                   <input type="text" id ="sector_start_date" name="sector_start_date" value="{{ form_data.sector_start_date }}" required placeholder="Enter Start Date">
+                   <input type="date" id ="sector_start_date" name="sector_start_date" value="{{ form_data.sector_start_date }}" required placeholder="Enter Start Date">
                 {% else %}
-                   <input type="text" id ="sector_start_date" name="sector_start_date"  value="2024-01-01" required placeholder="Enter Start Date">
+                   <input type="date" id ="sector_start_date" name="sector_start_date"  value="2024-01-01" required placeholder="Enter Start Date">
                 {% endif %}
 
                 <label for="sector_end_date">2.End Date</label>
                 {% if form_data.sector_end_date %}
-                    <input type="text" id ="sector_end_date" name="sector_end_date" value="{{ form_data.sector_end_date }}" required placeholder="Enter Start Date">
+                    <input type="date" id ="sector_end_date" name="sector_end_date" value="{{ form_data.sector_end_date }}" required placeholder="Enter Start Date">
                 {% else %}
-                    <input type="text" id ="sector_end_date" name="sector_end_date"  value="2025-12-31" required placeholder="Enter Start Date">
+                    <input type="date" id ="sector_end_date" name="sector_end_date"  value="2025-12-31" required placeholder="Enter Start Date">
                 {% endif %}
 
             <label for="threshold_limit">3.Threshold Detail</label>

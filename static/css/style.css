@@ -13,7 +13,7 @@ html, body {
 body {
     font-family: "Lato", sans-serif;
     display: flex;
-    height: 100vh;
+    /* height: 100vh; */
     overflow: hidden;
 }
 /*-------------------------------------------------------------Sidebar ----------------------------------------------------*/
@@ -326,7 +326,24 @@ textarea {
     box-sizing: border-box; /* Include padding and border in the element's total width */
 }
 
+input[type="date"],
+textarea {
+    width: 100%; /* Full width of the parent container */
+    padding: 10px; /* Space inside the dropdown */
+    border: 1px solid #ccc; /* Border color */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 12px; /* Updated font size */
+    background-color: #fff; /* Background color of the dropdown */
+    box-sizing: border-box; /* Include padding and border in the element's total width */
+}
+
 input[type="text"]:focus,
+textarea:focus {
+    border-color: #007bff; /* Border color on focus */
+    outline: none; /* Remove default outline */
+}
+
+input[type="date"]:focus,
 textarea:focus {
     border-color: #007bff; /* Border color on focus */
     outline: none; /* Remove default outline */
@@ -365,6 +382,14 @@ button:hover {
     box-sizing: border-box; /* Include padding and border in the element's total width */
 }
 
+.select2-container .select2-selection--single {
+    padding: 0px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 12px;
+    background-color: #fff;
+    box-sizing: border-box;
+}
 /* Focus state for the select dropdown */
 .form-group select:focus {
     border-color: #007bff; /* Border color on focus */
@@ -374,6 +399,11 @@ button:hover {
 /* Optional: Styling for dropdown options */
 .form-group option {
     padding: 8px; /* Space inside each option */
+}
+
+.select2-container--default .select2-results__option {
+    font-size: 12px;
+    padding: 8px;
 }
 /*---------------------------------------------------------------sidebar-divider-------------------------------------------------------------*/
 .sidebar-divider {
@@ -443,7 +473,7 @@ button:hover {
 }
 
 /* Individual card styling */
-.card-line-chart,.card-bar-chart {
+.card-line-chart,.card-bar-chart, .card-line-chart-strategy, .card-recommendation-strategy, .card-historic-strategy {
     background: #f8f8f8;
     border: 1px solid #ddd; /* Light border around the card */
     border-radius: 8px; /* Rounded corners */
@@ -452,7 +482,7 @@ button:hover {
     box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
 
-.card-line-chart h3, .card-bar-chart h3 {
+.card-line-chart h3, .card-bar-chart h3, .card-line-chart-strategy h3,.card-recommendation-strategy h3, .card-historic-strategy h3 {
     margin: 5px 0;
     font-size: 1.0vw; /* Make heading font size smaller */
     text-align: left; /* Align heading to the left */
@@ -460,6 +490,61 @@ button:hover {
     transition: background-color 0.3s, border-color 0.3s;
     font: inherit;
 }
+
+.card-wrapper {
+    display: flex;
+    gap: 20px; /* space between cards */
+    width: 100%;
+   
+}
+.strategy-text {
+    line-height: 1.6;
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: #333;
+}
+.recommendation {
+    overflow-y: auto;
+    flex-grow: 1;
+    padding-right: 8px;
+}
+
+/* .strategy-text {
+    line-height: 1.8;
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: #222;
+}
+
+.strategy-text strong {
+    color: #000;
+    font-weight: 600;
+} */
+
+.recommendation li.strategy-text {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 12px;
+    line-height: 1.6;
+    font-size: 14px;
+    color: #333;
+}
+
+/* Add diamond bullet using pseudo-element */
+.recommendation li.strategy-text::before {
+    content: "♦";
+    position: absolute;
+    left: 0;
+    color: #3572b0;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.strategy-text strong {
+    font-weight: 600;
+    color: #000;
+}
+
 /* Container for the Plotly chart */
 .line-chart-cards {
     width: 100%; /* Full width of the card */
@@ -476,9 +561,39 @@ button:hover {
 /* Container for the Plotly chart */
 .line-chart-cards-sector {
     width: 100%; /* Full width of the card */
-    height: 500px; /* Fixed height for the chart */
+    height: 620px; /* Fixed height for the chart */
     background-color: #f9f9f9; /* Light gray background to distinguish the chart area */
     border-radius: 4px; /* Slightly rounded corners */
+}
+
+.line-strategy-plot{
+    width: 100%; /* Full width of the card */
+    height: 340px; /* Fixed height for the chart */
+    background-color: #f9f9f9; /* Light gray background to distinguish the chart area */
+    border-radius: 4px; /* Slightly rounded corners */
+}
+.historic-plot,.recommendation{
+    width: 100%; /* Full width of the card */
+    height: 200px; /* Fixed height for the chart */
+    background-color: #f9f9f9; /* Light gray background to distinguish the chart area */
+    border-radius: 4px; /* Slightly rounded corners */   
+}
+
+
+.card-recommendation-strategy {
+    flex: 0.4;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.card-historic-strategy {
+    flex: 0.6;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 /*-------------------------------------------------------------Footer info ----------------------------------------------------*/
 /* Footer Styling */

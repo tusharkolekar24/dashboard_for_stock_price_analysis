@@ -1,0 +1,117 @@
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='./css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+</head>
+<body>
+{% extends "base.html" %}
+
+    {% block form_container %}
+    <div class="form-container">
+        <h1>Basic Info</h1>
+        <div class="sidebar-divider"></div>
+        <form action="{{ url_for('submit_strategy_form') }}" method="post" id="userForm">
+            <div class="form-group">
+
+                <label for="start_date_strategy">1.Start Date</label>
+
+                {% if form_data.start_date_strategy %}
+                   <input type="date" id ="start_date_strategy" name="start_date_strategy" value="{{ form_data.start_date_strategy }}" required placeholder="Enter Start Date">
+                
+                {% else %}
+
+                <input type="date" id ="start_date_strategy" name="start_date_strategy"  value="2024-01-01" required placeholder="Enter Start Date">
+
+                {% endif %}
+
+                <label for="end_date_strategy">2.End Date</label>
+
+                {% if form_data.end_date_strategy %}
+                   <input type="date" id ="end_date_strategy" name="end_date_strategy" value="{{ form_data.end_date_strategy }}" required placeholder="Enter Start Date">
+                
+                {% else %}
+
+                <input type="date" id ="end_date_strategy" name="end_date_strategy"  value="2025-08-08" required placeholder="Enter Start Date">
+
+                {% endif %}
+
+                <label for="stock_names_strategy">3. List of Stock</label>
+                <select id="stock_names_strategy" name="stock_names_strategy" class="stock-select" required>
+                    {% for incident in form_data.stock_names_strategy %}
+                            <option value='{{ incident }}'>{{ incident }}</option>
+                    {% endfor %}
+                </select>
+
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    {% endblock %}
+
+    {% block navbar_main %}
+    <div class="cards-container">
+        {% if form_data %}
+            <div class="card">
+                <h3>Current Price (Rs)</h3>
+                <p>{{ form_data.strategy_current_price }}</p>
+                <i class="fas fa-clock card-icon"></i> <!-- Clock icon -->
+            </div>
+            <div class="card">
+                <h3>Investment on Stocks</h3>
+                <p>80000</p>
+                <i class="fas fa-poll card-icon"></i> <!-- Dollar sign icon -->
+            </div>
+            <div class="card">
+                <h3>Generated Revenue</h3>
+                <p>{{ form_data.strategy_total_profit }}</p>
+                <i class="fas fa-bullhorn card-icon"></i> <!-- Bullhorn icon -->
+            </div>
+            <div class="card">
+                <h3>Number of Event</h3>
+                <p>{{ form_data.strategy_event_count }}</p>
+                <i class="fas fa-bullhorn card-icon"></i> <!-- Poll icon -->
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="cards-container-row2">
+        <div class="card-line-chart-strategy">
+            {% if form_data %}
+            <h3>Price Action Info :&nbsp;&nbsp;{{ form_data.selected_stock_strategy }}</h3>
+            {% else %}
+                <h3>Trend Analysis :</h3>
+            {% endif %}
+            <div class="sidebar-divider"></div>
+            <div class="line-strategy-plot" id="line-strategy-chart"></div> 
+            
+        </div>
+    </div>
+
+    <div class="cards-container-row2">
+        <div class="card-wrapper">
+            <div class="card-recommendation-strategy">
+                <h3>Recommendation :&nbsp;&nbsp;{{ form_data.selected_stock_strategy }}</h3>
+                <div class="sidebar-divider"></div>
+
+                <ul class="recommendation">
+                    {% for comment in form_data.strategy_comments %}
+                        <li  class="strategy-text">
+                            {{ comment}}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="card-historic-strategy">
+                <h3>Historical Info :&nbsp;&nbsp;{{ form_data.end_date_strategy }}</h3>
+                <div class="sidebar-divider"></div>
+                <div class="historic-plot" id="bar-strategy-chart"></div> 
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endblock %}
+</body>

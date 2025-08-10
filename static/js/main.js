@@ -49,4 +49,29 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => console.error('Error fetching pie chart data:', error));
 
+    // Fetch and render line chart data
+    fetch('/line-strategy-chart') // Ensure this matches your Flask route for pie chart
+        .then(response => response.json())
+        .then(data => {
+            var graphJson = JSON.parse(data.graph_json);
+            Plotly.react('line-strategy-chart', graphJson.data, graphJson.layout, config);
+        })
+        .catch(error => console.error('Error fetching pie chart data:', error));
+
+    // Fetch and render line chart data
+    fetch('/bar-strategy-chart') // Ensure this matches your Flask route for pie chart
+        .then(response => response.json())
+        .then(data => {
+            var graphJson = JSON.parse(data.graph_json);
+            Plotly.react('bar-strategy-chart', graphJson.data, graphJson.layout, config);
+        })
+        .catch(error => console.error('Error fetching pie chart data:', error));
+
+});
+
+$(document).ready(function() {
+    $('.stock-select').select2({
+        placeholder: "Select or search a stock",
+        width: '100%'  // Ensures it spans the container
+    });
 });
