@@ -425,7 +425,8 @@ class Stock_Info:
 
     def load_data(self,postgres_db):
         query = text("""
-                        SELECT * FROM share_price
+                        SELECT time, stock_name, close_price, high_price, low_price, open_price, volume, volume_upg, 
+                                moving_avg_200, moving_avg_100, moving_avg_50, moving_avg_25, moving_avg_9 FROM share_price
                         WHERE stock_name = :stock_name AND 
                               time       >=:start_date AND 
                               time       <=:end_date
@@ -822,101 +823,119 @@ def calculate_revenue(insights, categories, stock_data, min_return_threshold=0):
     return total_profit, buy_dates, sell_dates, comments
 
 def buy_to_sell_representations(information,buy_info,sell_info):
-    buy_information  = information.get('stock_info')[information.get('stock_info')['Date'].isin(buy_info)]
-    sell_information = information.get('stock_info')[information.get('stock_info')['Date'].isin(sell_info)]
+
     fig = go.Figure()
+    # print(information,'information')
 
-    fig.add_trace(
-        go.Scatter(
-            x=information.get('stock_info')["Date"].values,
-            y=information.get('stock_info')["Close"].values,
-            name="Close",
-            text=information.get('stock_info')[["Date", "Close", "Stock_Name",  "Volume_Upg"]].apply(
-                lambda row: f"Date: {row['Date']}<br>Close: {round(row['Close'], 2)}<br>Stock Name: {row['Stock_Name']}<br>Volume: {round(row['Volume_Upg'], 2)}",
-                axis=1,
-            ),
-            hoverinfo="text",
-            line=dict(color='#636EFA', width=2),
-        )
-    )
+    if type(information)==dict:
+        # print(information.get('stock_info'),'information detail')
+        if information.get('stock_info').shape[0]!=0:
+            
+            buy_information  = information.get('stock_info')[information.get('stock_info')['Date'].isin(buy_info)]
+            sell_information = information.get('stock_info')[information.get('stock_info')['Date'].isin(sell_info)]
 
-    fig.add_trace(
-        go.Scatter(
-            x=information.get('stock_info')["Date"].values,
-            y=information.get('stock_info')["MAE_25"].values+information.get('limit_threshold'),
-            name="Upper Limit",
-            text=information.get('stock_info')[["Date", "MAE_25", "Stock_Name"]].apply(
-                lambda row: f"Date: {row['Date']}<br>Upper Limit: {round(row['MAE_25']+information.get('limit_threshold'),2)}<br>Stock Name: {row['Stock_Name']}",
-                axis=1,
-            ),
-            hoverinfo="text",
-            line=dict(color="black", width=1.5,dash="dash"),
-        )
-    )
+            # print(buy_information.shape,sell_information.shape)
+            fig.add_trace(
+                go.Scatter(
+                    x=information.get('stock_info')["Date"].values,
+                    y=information.get('stock_info')["Close"].values,
+                    name="Close",
+                    text=information.get('stock_info')[["Date", "Close", "Stock_Name",  "Volume_Upg"]].apply(
+                        lambda row: f"Date: {row['Date']}<br>Close: {round(row['Close'], 2)}<br>Stock Name: {row['Stock_Name']}<br>Volume: {round(row['Volume_Upg'], 2)}",
+                        axis=1,
+                    ),
+                    hoverinfo="text",
+                    line=dict(color='#636EFA', width=2),
+                )
+            )
 
-    fig.add_trace(
-        go.Scatter(
-            x=information.get('stock_info')["Date"].values,
-            y=information.get('stock_info')["MAE_25"].values-information.get('limit_threshold'),
-            name="Lower Limit",
-            text=information.get('stock_info')[["Date", "MAE_25", "Stock_Name"]].apply(
-                lambda row: f"Date: {row['Date']}<br>Lower Limit: {round(row['MAE_25']-information.get('limit_threshold'),2)}<br>Stock Name: {row['Stock_Name']}",
-                axis=1,
-            ),
-            hoverinfo="text",
-            line=dict(color="black", width=1.5,dash="dash"),
-        )
-    )
+            fig.add_trace(
+                go.Scatter(
+                    x=information.get('stock_info')["Date"].values,
+                    y=information.get('stock_info')["MAE_25"].values+information.get('limit_threshold'),
+                    name="Upper Limit",
+                    text=information.get('stock_info')[["Date", "MAE_25", "Stock_Name"]].apply(
+                        lambda row: f"Date: {row['Date']}<br>Upper Limit: {round(row['MAE_25']+information.get('limit_threshold'),2)}<br>Stock Name: {row['Stock_Name']}",
+                        axis=1,
+                    ),
+                    hoverinfo="text",
+                    line=dict(color="black", width=1.5,dash="dash"),
+                )
+            )
 
-    fig.add_trace(
-        go.Scatter(
-            x=buy_information["Date"],
-            y=buy_information["Close"],
-            name="SELL Signal",
-            mode='markers',  # Show both markers and lines
-            marker=dict(symbol='circle', size=7, color='green',opacity=0.6),  # Marker style
-        )
-    )
+            fig.add_trace(
+                go.Scatter(
+                    x=information.get('stock_info')["Date"].values,
+                    y=information.get('stock_info')["MAE_25"].values-information.get('limit_threshold'),
+                    name="Lower Limit",
+                    text=information.get('stock_info')[["Date", "MAE_25", "Stock_Name"]].apply(
+                        lambda row: f"Date: {row['Date']}<br>Lower Limit: {round(row['MAE_25']-information.get('limit_threshold'),2)}<br>Stock Name: {row['Stock_Name']}",
+                        axis=1,
+                    ),
+                    hoverinfo="text",
+                    line=dict(color="black", width=1.5,dash="dash"),
+                )
+            )
 
-    fig.add_trace(
-        go.Scatter(
-            x=sell_information["Date"],
-            y=sell_information["Close"],
-            name="SELL Signal",
-            mode='markers',  # Show both markers and lines
-            marker=dict(symbol='circle', size=8, color='red',opacity=0.6),  # Marker style
-        )
-    )
+            fig.add_trace(
+                go.Scatter(
+                    x=buy_information["Date"],
+                    y=buy_information["Close"],
+                    name="SELL Signal",
+                    mode='markers',  # Show both markers and lines
+                    marker=dict(symbol='circle', size=7, color='green',opacity=0.6),  # Marker style
+                )
+            )
 
-    fig.add_trace(
+            fig.add_trace(
+                go.Scatter(
+                    x=sell_information["Date"],
+                    y=sell_information["Close"],
+                    name="SELL Signal",
+                    mode='markers',  # Show both markers and lines
+                    marker=dict(symbol='circle', size=8, color='red',opacity=0.6),  # Marker style
+                )
+            )
 
-        go.Scatter(
-            x=information.get('stock_info')["Date"].values,
-            y=information.get('stock_info')["MAE_25"].values,
-            name="MAE_25",
-            text=information.get('stock_info')[["Date", "MAE_25", "Stock_Name",  "Volume_Upg"]].apply(
-                lambda row: f"Date: {row['Date']}<br>MAE_25: {round(row['MAE_25'], 2)}<br>Stock Name: {row['Stock_Name']}<br>Volume: {round(row['Volume_Upg'], 2)}",
-                axis=1,
-            ),
-            hoverinfo="text",
-            line=dict(color="gray", width=1.5,dash="dash"),
-        )
-    )
+            fig.add_trace(
 
-    fig.add_trace(
+                go.Scatter(
+                    x=information.get('stock_info')["Date"].values,
+                    y=information.get('stock_info')["MAE_25"].values,
+                    name="MAE_25",
+                    text=information.get('stock_info')[["Date", "MAE_25", "Stock_Name",  "Volume_Upg"]].apply(
+                        lambda row: f"Date: {row['Date']}<br>MAE_25: {round(row['MAE_25'], 2)}<br>Stock Name: {row['Stock_Name']}<br>Volume: {round(row['Volume_Upg'], 2)}",
+                        axis=1,
+                    ),
+                    hoverinfo="text",
+                    line=dict(color="gray", width=1.5,dash="dash"),
+                )
+            )
 
-        go.Scatter(
-            x=information.get('stock_info')["Date"].values,
-            y=information.get('stock_info')["MAE_50"].values,
-            name="MAE_50",
-            text=information.get('stock_info')[["Date", "MAE_50", "Stock_Name",  "Volume_Upg"]].apply(
-                lambda row: f"Date: {row['Date']}<br>MAE_50: {round(row['MAE_50'], 2)}<br>Stock Name: {row['Stock_Name']}<br>Volume: {round(row['Volume_Upg'], 2)}",
-                axis=1,
-            ),
-            hoverinfo="text",
-            line=dict(color="firebrick", width=1.5,dash="dash"),
-        )
-    )
+            fig.add_trace(
+
+                go.Scatter(
+                    x=information.get('stock_info')["Date"].values,
+                    y=information.get('stock_info')["MAE_50"].values,
+                    name="MAE_50",
+                    text=information.get('stock_info')[["Date", "MAE_50", "Stock_Name",  "Volume_Upg"]].apply(
+                        lambda row: f"Date: {row['Date']}<br>MAE_50: {round(row['MAE_50'], 2)}<br>Stock Name: {row['Stock_Name']}<br>Volume: {round(row['Volume_Upg'], 2)}",
+                        axis=1,
+                    ),
+                    hoverinfo="text",
+                    line=dict(color="firebrick", width=1.5,dash="dash"),
+                )
+            )
+
+            fig.update_layout(
+                xaxis=dict(
+                    range=[
+                        information['stock_info']["Date"].iloc[0],
+                        information['stock_info']["Date"].iloc[-1]
+                    ],
+                    automargin=True
+                )
+            )
 
     fig.update_layout(yaxis_title=None)
     fig.update_layout(xaxis_title=None)
@@ -932,54 +951,49 @@ def buy_to_sell_representations(information,buy_info,sell_info):
     fig.update_layout(
         legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="right", x=0.65)
     )
-
-    fig.update_layout(
-        xaxis=dict(
-            range=[
-                information['stock_info']["Date"].iloc[0],
-                information['stock_info']["Date"].iloc[-1]
-            ],
-            automargin=True
-        )
-    )
     
     return fig
 
 class Historic_Info:
-      def __init__(self,day_info):
-          self.__day_info = day_info
-          self.__query    = text(f"""
-                                    WITH dataset AS (
-                                        SELECT *, 
-                                               abs(close_price - moving_avg_50) AS diff,
-                                               100 * abs(close_price - moving_avg_50) / moving_avg_50 AS percentage
-                                        FROM price_action_info
-                                        WHERE status != 'Buy Signal' 
-                                          AND time = '{self.__day_info}'
-                                    )
-                                    SELECT 
-                                        t1.time, 
-                                        t1.stock_name, 
-                                        t1.close_price, 
-                                        t1.volume_upg, 
-                                        t1.moving_avg_50, 
-                                        t1.moving_avg_25, 
-                                        t1.percentage, 
-                                        ROUND(t1.diff::numeric, 2) AS rounded_diff,
-                                        t2.sell_to_buy_ratio, 
-                                        t2.threshold, 
-                                        t2.skewness
+    def __init__(self,day_info):
+        self.__day_info = day_info
+        #   self.__query    = text(f"""
+        #                             WITH dataset AS (
+        #                                 SELECT *, 
+        #                                        abs(close_price - moving_avg_50) AS diff,
+        #                                        100 * abs(close_price - moving_avg_50) / moving_avg_50 AS percentage
+        #                                 FROM price_action_info
+        #                                 WHERE status != 'Buy Signal' 
+        #                                   AND time = '{self.__day_info}'
+        #                             )
+        #                             SELECT 
+        #                                 t1.time, 
+        #                                 t1.stock_name, 
+        #                                 t1.close_price, 
+        #                                 t1.volume_upg, 
+        #                                 t1.moving_avg_50, 
+        #                                 t1.moving_avg_25, 
+        #                                 t1.percentage, 
+        #                                 ROUND(t1.diff::numeric, 2) AS rounded_diff,
+        #                                 t2.sell_to_buy_ratio, 
+        #                                 t2.threshold, 
+        #                                 t2.skewness
 
-                                    FROM dataset AS t1
+        #                             FROM dataset AS t1
 
-                                    LEFT JOIN important_stocks AS t2
-                                        ON t1.stock_name = t2.stock_name
+        #                             LEFT JOIN important_stocks AS t2
+        #                                 ON t1.stock_name = t2.stock_name
 
-                                    WHERE (t1.close_price>t1.moving_avg_25) and (t1.moving_avg_25 > t1.moving_avg_50)
-                                    ORDER BY t1.percentage DESC;             
-                                  """)
+        #                             WHERE (t1.close_price>t1.moving_avg_25) --and (t1.moving_avg_25 > t1.moving_avg_50)
+        #                             ORDER BY t1.percentage DESC;             
+        #                           """)
+        self.__query    = text(f"""
+                                    SELECT * FROM strategy_stocks
+                                    WHERE time = '{self.__day_info}' AND
+                                          percentage>1
+                                """)
             
-      def load_data(self, postgres_db):
+    def load_data(self, postgres_db):
           with postgres_db.connect() as conn:
                 stock_info         = conn.execute(self.__query)
                 fetch_stock_detail = stock_info.fetchall()
@@ -989,6 +1003,7 @@ class Historic_Info:
 
 def categorical_info(feature):
     lable = []
+    status = '0-5%'
     for vals in feature:
         if vals<=5:
             status = '0-5%'
@@ -1008,46 +1023,48 @@ def categorical_info(feature):
         if 26<=vals<=30:
             status = '26-30%'
             
-        if vals>=36:
+        if vals>=31:
             status = '>=31%'
         lable.append(status)    
     return lable   
 
 
 def get_historical_info_bar_plot(plotset):
-    plotset['percentage'] = plotset['percentage'].apply(lambda text_info:round(text_info,2))
-    plotset['stock_name'] = plotset['stock_name'].apply(lambda text_info:text_info.replace(".NS",""))  
-    
-    plotset  = plotset.sort_values('stock_name',ascending=True)
-    color_mapping = {
-                    '0-5%': '#d4e157',       # Light green
-                    '6-10%': '#aed581',
-                    '11-15%': '#81c784',
-                    '16-20%': '#4caf50',
-                    '21-25%': '#388e3c',
-                    '26-30%': '#2e7d32',
-                    '31%+': '#1b5e20'
-                    }
-    plotset['color_code'] = categorical_info(plotset['percentage'])
-    plotset['bar_color'] = plotset['color_code'].map(color_mapping)
+    # print(plotset.head())
     fig = go.Figure()
+    if plotset.shape[0]!=0:
+        plotset['percentage'] = plotset['percentage'].apply(lambda text_info:round(text_info,2))
+        plotset['stock_name'] = plotset['stock_name'].apply(lambda text_info:text_info.replace(".NS",""))  
+        
+        plotset  = plotset.sort_values('stock_name',ascending=True)
+        color_mapping = {
+                        '0-5%': '#d4e157',       # Light green
+                        '6-10%': '#aed581',
+                        '11-15%': '#81c784',
+                        '16-20%': '#4caf50',
+                        '21-25%': '#388e3c',
+                        '26-30%': '#2e7d32',
+                        '31%+': '#1b5e20'
+                        }
+        plotset['color_code'] = categorical_info(plotset['percentage'])
+        plotset['bar_color'] = plotset['color_code'].map(color_mapping)
 
-    fig.add_trace(
-        go.Bar(
-            x=plotset['stock_name'],
-            y=plotset['percentage'],
-            marker=dict(color=plotset['bar_color']),
-            name="Price Action",
-            # REMOVE `text=...` to avoid label on bar
-            hovertemplate=(
-                'Date: %{customdata[0]}<br>'
-                'Stock Name: %{customdata[1]}<br>'
-                'Percentage: %{customdata[2]}%<br>'
-                'Price: ₹%{customdata[3]}<extra></extra>'
-            ),
-            customdata=plotset[['time', 'stock_name', 'percentage', 'close_price']].values
+        fig.add_trace(
+            go.Bar(
+                x=plotset['stock_name'],
+                y=plotset['percentage'],
+                marker=dict(color=plotset['bar_color']),
+                name="Price Action",
+                # REMOVE `text=...` to avoid label on bar
+                hovertemplate=(
+                    'Date: %{customdata[0]}<br>'
+                    'Stock Name: %{customdata[1]}<br>'
+                    'Percentage: %{customdata[2]}%<br>'
+                    'Price: ₹%{customdata[3]}<extra></extra>'
+                ),
+                customdata=plotset[['time', 'stock_name', 'percentage', 'close_price']].values
+            )
         )
-    )
 
     fig.update_layout(
         hovermode="x",  # or "closest"

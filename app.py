@@ -222,9 +222,8 @@ async def strategy():
         past_history      = Historic_Info(day_info=metadata["end_date_strategy"])
         past_history_info = past_history.load_data(postgres_db)
         
-        past_history_table = pd.DataFrame(past_history_info,columns=['time','stock_name','close_price','volume_upg','moving_avg_50',
-                                       'moving_avg_25','percentage','rounded_diff','sell_to_buy_ratio',
-                                       'threshold','skewness'])
+        past_history_table = pd.DataFrame(past_history_info,columns=['time', 'stock_name', 'close_price', 'High', 
+                                                                     'MAE_25', 'MAE_50', 'percentage','Revenue','write_time','checksum'])
         
         metadata['strategy_past_history']   = past_history_table
         # print(comments)
