@@ -823,7 +823,6 @@ def calculate_revenue(insights, categories, stock_data, min_return_threshold=0):
     return total_profit, buy_dates, sell_dates, comments
 
 def buy_to_sell_representations(information,buy_info,sell_info):
-
     fig = go.Figure()
     # print(information,'information')
 
