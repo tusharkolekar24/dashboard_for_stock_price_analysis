@@ -128,11 +128,11 @@ This project is licensed under the **MIT License**.
 ### ⭐ If you find this project helpful, please give it a star on GitHub to support further development!
 
 
-Home page: Volume & Stock analysis to give buy and sell signals.
+## ✨ Home page: Volume & Stock analysis to give buy and sell signals.
 <img width="1900" height="943" alt="image" src="https://github.com/user-attachments/assets/15464079-6e9b-410d-9793-8100591a7ea8" />
 
-Sector Page: Sector Analysis
+## ✨ Sector Page: Sector Analysis
 <img width="1908" height="932" alt="image" src="https://github.com/user-attachments/assets/52ac24bf-4056-4b56-888a-be7900c9a921" />
 
-Strategy page: Price action Analysis
+## ✨ Strategy page: Price action Analysis
 <img width="1904" height="940" alt="image" src="https://github.com/user-attachments/assets/32345a17-cdfb-4541-bcd4-37a8cf9af970" />
